@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin ;
 | Application Routes
 |--------------------------------------------------------------------------
 |
-| @omid.h70
+| @o
 | 
 | 
 |
