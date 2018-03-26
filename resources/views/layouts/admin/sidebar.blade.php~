@@ -1,0 +1,109 @@
+<div class="navbar-default sidebar" role="navigation">
+	<div class="sidebar-nav navbar-collapse">
+		<ul class="nav" id="side-menu">
+			<li class="sidebar-search">
+				<div class="input-group custom-search-form">
+					<input type="text" class="form-control" placeholder="Search..."> <span
+						class="input-group-btn">
+						<button class="btn btn-default" type="button">
+							<i class="fa fa-search"></i>
+						</button>
+					</span>
+				</div> <!-- /input-group -->
+			</li>
+
+			<li>
+				<a href="index.html"><i class="fa fa-dashboard fa-fw"></i>
+					{{ trans('admin.dashboard') }}
+				</a>
+			</li>
+            
+            <li>
+				<a href="index.html"><i class="fa fa-sitemap fa-fw"></i>
+					{{ trans('side_bar.sidebar') }}
+					<span class="fa arrow"></span>
+				</a>
+				<ul class="nav nav-second-level">
+					<li><a href="{{ url(App::getLocale().'/admin/sidebar/add-new') }}">
+					 {{ trans('side_bar.add_sidebar') }}
+					</a></li>
+					<li><a href="{{ url(App::getLocale().'/admin/sidebar') }}">{{ trans('side_bar.see_all') }}</a></li>
+
+				</ul> <!-- /.nav-second-level -->
+			</li>
+			
+			<li>
+				<a href="{{ url(App::getLocale().'/admin/user') }}">
+    					<i class="fa fa-users fa-fw"></i>
+    					{{ trans('peopele.people') }}
+    					<span class="fa arrow"></span>
+				</a>
+				<ul class="nav nav-second-level">
+					<li>
+					   <a href="{{ url(App::getLocale().'/admin/user') }}">{{ trans('people.see_all') }}</a>
+					</li>
+				</ul> <!-- /.nav-second-level -->
+			</li>
+
+			<li>
+				<a href="{{ url(App::getLocale().'/admin/acl') }}">
+					<i class="fa fa-key fa-fw"></i> 
+					{{ trans('acl.access_control_layer') }}
+					<span class="fa arrow"></span>
+				</a>
+				<ul class="nav nav-second-level">
+					<li><a href="{{ url(App::getLocale().'/admin/acl/edit-sidebar') }}">
+					 {{ trans('acl.see_all') }}
+					</a></li>
+				</ul> <!-- /.nav-second-level -->
+			</li>
+
+			<li>
+				<a href="#">
+					<i class="fa fa-bar-chart fa-fw"></i> 
+					{{ trans('static.statics') }}
+					<span class="fa arrow"></span>
+				</a>
+				<ul class="nav nav-second-level">
+					<li><a href="panels-wells.html">{{ trans('static.__test') }} </a></li>
+				</ul> <!-- /.nav-second-level -->
+			</li>
+			
+			<li>
+				<a href="#">
+					<i class="fa fa-lemon-o fa-fw"></i> 
+					{{ trans('food.foods') }}
+					<span class="fa arrow"></span>
+				</a>
+				<ul class="nav nav-second-level">
+					<li>
+					   <a href="{{ url(App::getLocale().'/admin/food/add-new') }}">
+					       {{ trans('food.add_food') }}
+					   </a>
+					</li>
+					<li>
+					   <a href="{{ url(App::getLocale().'/admin/food') }}">
+					       {{ trans('food.see_all') }}
+					   </a>
+					</li>
+					<li>
+    				</li>
+    			   </ul>		
+			</li>
+
+			<li class="active">
+				<a href="#">
+					<i class="fa fa-cogs fa-fw"></i>
+					{{ trans('admin.settings') }}
+					<span class="fa arrow"></span>
+				</a>
+				<ul class="nav nav-second-level">
+					<li><a class="active" href="blank.html">{{ trans('admin.seo_setting') }} </a></li>
+										<li><a class="active" href="blank.html">{{ trans('admin.__setting') }} </a></li>
+				</ul> <!-- /.nav-second-level -->
+			</li>
+		</ul>
+	</div>
+	<!-- /.sidebar-collapse -->
+</div>
+<!-- /.navbar-static-side -->

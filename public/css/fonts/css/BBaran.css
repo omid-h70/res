@@ -1,0 +1,33 @@
+@charset "utf-8";
+/* CSS Document */
+
+@font-face{
+	font-family:'BBaran';
+	src:url('../farsi/BBaran.eot');
+	src:local('☺'),url('../farsi/BBaran.ttf') format('truetype'), 
+    url('../farsi/BBaran.woff') format('woff'),
+	url('../farsi/BBaran.svg') format('svg');
+}
+
+.b-baran{
+	
+	font-family:BBaran,Tahoma,Times,serif;
+	direction:rtl;
+	
+}
+
+.b-baran-med-1{
+	
+	font-size:20px;
+	font-family:BBaran,Tahoma,Times,serif;
+	direction:rtl;
+	
+}
+
+.b-baran-med-2{
+	
+	font-size:25px;
+	font-family:BBaran,Tahoma,Times,serif;
+	direction:rtl;
+	
+}

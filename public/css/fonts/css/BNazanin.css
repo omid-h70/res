@@ -1,0 +1,42 @@
+@charset "utf-8";
+/* CSS Document */
+
+@font-face{
+	font-family:'Bnazanin';
+	src:url('../farsi/Bnazanin.eot');
+	src:local('☺'),url('../farsi/Bnazanin.ttf') format('truetype'), 
+    url('../farsi/Bnazanin.woff') format('woff'),
+	url('../farsi/Bnazanin.svg') format('svg');
+}
+
+.b-nazanin{
+	
+	font-family:BNazanin,Tahoma,Times,serif;
+	direction:rtl;
+	
+}
+
+
+.b-nazanin-med{
+	
+	font-size:15px;
+	font-family:BNazanin,Tahoma,Times,serif;
+	direction:rtl;
+	
+}
+
+.b-nazanin-med-1{
+	
+	font-size:20px;
+	font-family:BNazanin,Tahoma,Times,serif;
+	direction:rtl;
+	
+}
+
+.b-nazanin-med-2{
+	
+	font-size:25px;
+	font-family:BNazanin,Tahoma,Times,serif;
+	direction:rtl;
+	
+}

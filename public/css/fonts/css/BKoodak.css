@@ -1,0 +1,33 @@
+@charset "utf-8";
+/* CSS Document */
+
+@font-face{
+	font-family:'BKoodak';
+	src:url('../farsi/BKoodakBold.eot');
+	src:local('☺'),url('../farsi/BKoodakBold.ttf') format('truetype'), 
+    url('../farsi/BKoodakBold.woff') format('woff'),
+	url('../farsi/BKoodakBold.svg') format('svg');
+}
+
+.b-koodak{
+	
+	font-family:BKoodak,Tahoma,Times,serif;
+	direction:rtl;
+	
+}
+
+.b-koodak-med-1{
+	
+	font-size:20px;
+	font-family:BKoodak,Tahoma,Times,serif;
+	direction:rtl;
+	
+}
+
+.b-koodak-med-2{
+	
+	font-size:25px;
+	font-family:BKoodak,Tahoma,Times,serif;
+	direction:rtl;
+	
+}

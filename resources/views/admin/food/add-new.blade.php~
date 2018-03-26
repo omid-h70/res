@@ -1,0 +1,337 @@
+@extends('layouts.admin.main')
+@section('sidebar')
+   @include('layouts.admin.sidebar')
+@endsection
+@section('linked-stylesheets')
+<!-----------------  bootstrap file  input --------------->
+<link rel="stylesheet" type="text/css" href="{{ asset( '/public/plugins/bootstrap-fileinput/css/fileinput.min.css') }}" />
+
+<!----------------- bootstrap tags input  --------------->
+<link rel="stylesheet" type="text/css" href="{{ asset( '/public/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css') }}" />
+<link rel="stylesheet" type="text/css" href="{{ asset( '/public/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput-typeahead.css') }}" />
+@endsection
+@section('extra-scripts')
+<!-----------------  bootstrap file  input --------------->
+<script src="{{ asset( '/public/plugins/bootstrap-fileinput/js/plugins/canvas-to-blob.min.js') }}" ></script>
+<script src="{{ asset( '/public/plugins/bootstrap-fileinput/js/fileinput.min.js') }}" ></script>
+<script src="{{ asset( '/public/plugins/bootstrap-fileinput/js/fileinput_locale_uk.js') }}" ></script>
+<script>
+$(document).ready( function(){
+	$("#food-picture").fileinput({
+		previewFileType : "image",
+		allowedFileExtention : ["jpg"],
+		browserClass :"btn btn-primary btn-block",
+		showUpload: false,
+	
+	});
+
+});
+
+</script>
+<!----------------- bootstrap tags input  --------------->
+<script src="{{ asset( '/public/plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.min.js') }}" ></script>
+<script type="text/javascript">
+    $( document ).ready(function() {
+    	console.log( "ready!" );
+    	$("#add-category-btn").click( function( event ){
+    		event.preventDefault();
+    		console.log( "event prevent default" );
+    		console.log( "opening modal" );
+    	
+		// console.log( 'X-CSRF-TOKEN:' + $('meta[name="csrf-token"]').attr('content') );
+		/*****************************************************/
+    		$("#save-category-btn").click( function( event ){
+            	$.ajax({
+                	
+                   headers : {'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')},
+            	   data: {
+               	      'category_title' : $('input[id="add-category"]').val(),
+               	      'mama' :'kind'
+               	   },
+                   dataType: 'json',
+        
+         		   error: function() {
+           		      $('#info').html('<p>An error has occurred</p>');
+           		   },	
+        
+         		   success: function(data) {
+             		  if( typeof data['category_title'] !== 'undefined' ){
+              			 console.log( '1' );
+                 		 $("div#category-status-error").removeClass("hidden");
+						 $("div#category-status-error p#error")
+							.append(data['category-title'] +'<br>' );
+					     $("div#category-status-error span.close").click( function( event ){   
+						    $("div#category-status-error").addClass("hidden");
+						 });		
+							   
+                 	  }else if( typeof data['no-error'] !== 'undefined' ){
+                  		 console.log( 'no Error' );
+                   		 $("div#category-status-success ").removeClass("hidden");
+						 $("div#category-status-success p#success")
+						   .append(data['no-error']+'<br>' );
+						 $("div#category-status-success span.close").click( function( event ){   
+								$("div#category-status-success").addClass("hidden");
+						 });
+						 
+						 if( typeof data['category_array'] !== 'undefined' ){
+
+							 /*****insert newly added Category inside select tag****/
+							 
+							 var category_array = data['category_array'];
+
+    						 for (i = 0; i< category_array.length; i++) { 
+	
+    							 var option = $('<option></option>').attr({
+    								 'value': category_array[i]['category_slug'],
+    							 }).text( category_array[i]['category_title'] );
+    							 
+    							 $("select[name='category_select']").append( option );
+    						 }
+							
+						  
+						 }
+                 	  }	  
+
+          			  console.log(  data );
+                  			  
+         		   },
+         		   
+         		   type: 'POST',
+         		   
+          		   url: "{{ url(App::getLocale().'/admin/food/add-new') }}",
+         	 		   
+         		});
+    		});
+    	});/***** ENDOF Click Event ****/
+
+    	/***********Tags Input **********/
+      
+    	$('input#tags').tagsinput({
+    	   tagClass: 'label label-primary big'
+    	});
+
+  		/* Preventing Modal from Opening */
+    	$('div.bootstrap-tagsinput>input').focusin(function(event){
+        	$("#add-category-btn").removeAttr('data-target');
+    	});
+
+    	$('div.bootstrap-tagsinput>input').focusout(function(event){
+          	$("#add-category-btn").attr('data-target','#add-category-modal');
+      	});
+
+      	
+    	/*********** **********/ 
+    });
+</script>
+@endsection
+@section('extra-stylesheets')
+<style  type="text/css" >
+textarea {
+    resize: none;
+}
+
+#food-img{
+	width: 100px;
+	height: 100px;
+	margin-left:15px;
+}
+
+.success-box{
+	margin:25px;
+	
+}
+
+.hidden{
+	display:none;
+	
+}
+
+</style>
+
+@endsection
+@section('content')
+    <div class="row">
+    	<div class="col-lg-12">
+    		<h1 class="page-header">{{ trans('food.add_food') }}</h1>
+    	</div>
+    	<!-- /.col-lg-12 -->
+    </div><!-- /.row -->
+    <form id="add-food-form" role="form" method="post" action="{{ url(App::getLocale().'/admin/food/add-new') }}" enctype="multipart/form-data" accept-charset="UTF-8">
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <div class="row">
+            <?php  Helper::showErrors( $errors ); ?>
+        </div>
+        <div class="row">
+            <?php if( isset($SuccessArray )):?>
+                <?php  Helper::showSuccess( $SuccessArray ); ?>
+            <?php endif;?>
+        </div>
+        <div class="row">
+            
+        </div>
+        <div class="row">
+            <div class="form-group">
+                
+                <div class="col-sm-3">
+                    <input name="food_title" placeholder="FoodName" type="text" class="form-control" value="{{ $FoodArray['food_title'] or '' }}">
+                </div>
+               
+                <div class="col-sm-4">
+                     <label class="" for="status" >
+			 @if( isset( $FoodArray['food_status'] ) )
+                         <input id="status" class="" type="checkbox" name="food_status" value="" {{ $FoodArray['food_status']=='active' ? 'checked' : '' }}> {{ trans('public.publish') }}
+			 @else
+		            <input id="status" class="" type="checkbox" name="food_status" value="active" > {{ trans('public.publish') }}
+			
+		         @endif
+                     </label>
+                    
+                </div>
+                
+            </div>          
+        </div><!-- /.row -->
+        <br><br>
+        <div class="row">
+            <div class="form-group">
+
+                <div class="col-sm-3">
+		   <label class="control-label" ></label>
+                   <input id="food-picture" class="file-loading" name="picture_input" type="file" >
+                </div>
+                
+                <div class="col-sm-3">
+                    <input name="food_price" placeholder="Price" type="text" class="form-control" value="{{ $FoodArray['food_price'] or '' }}">
+                </div>
+
+           </div>
+        </div><!-- /.row -->  
+        <br><br> 
+        <div class="row">
+            <div class="form-group">
+                <div class="col-sm-2">
+                    <select name="category_select" form="add-food-form" class="form-control">
+			@if( !isset( $SelectedCategoryArray ) )
+                           <option value="" selected > {{ trans('form.food_category') }} </option>
+			@else
+			   <option value=""> {{ trans('form.food_category') }} </option>
+			   @foreach( $SelectedCategoryArray as $category)
+				<option selected value="{{ $category['category_slug'] }}"> {{ $category['category_title'] }} </option>
+			   @endforeach
+			@endif	
+
+                        @if( isset($ViewParams ) )
+                            @foreach( $ViewParams['category_array'] as $category)
+                              <option  value="{{ $category['category_slug'] }}" >{{ $category['category_title'] }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+                <div class="col-sm-1">
+                    <button id="add-category-btn" class="btn btn-default btn-block" data-toggle="modal" data-target="#add-category-modal">+</button>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="add-category-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">{{ trans('form.add_a_new_category') }}</h4>
+                      </div>
+                      <div class="modal-body">
+                            <div id="category-status-error" class="hidden row">       
+                                <div class="col-md-10 col-centered alert alert-danger alert-dismissible fade in" role=alert>
+            						<p id="error">
+            						  <span class="close">
+            						      <i class="fa fa-remove fa-fw" class="close"></i>
+            						  </span>
+            						</p>
+    						    </div>
+                            </div>
+                            <div id="category-status-success" class="hidden row">  
+                                <div class="bg-success col-md-10 col-centered alert  alert-dismissible fade in" >	
+            						<p class="" id="success">
+            						<span class="close"><i class="fa fa-check fa-fw" class="close"></i>
+            						</span>
+            						</p>
+    						    </div>
+                            </div>
+                            <div class="row">
+                                
+                                <div class="col-md-2">
+                                    <label for="exampleInputEmail1">{{ trans('public.add') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="add-category" name="category_title" placeholder="CategoryTitle">
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                         
+                          
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button id="save-category-btn" type="button" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div><!-- End Of Modal -->
+  
+                <div class="col-sm-4">
+                    
+                    <input id="tags" rows="4" cols="50" type="text" name="tag_array" class="form-control" placeholder="TAGS" value="{{ $Tags or '' }}">
+                    
+                </div>
+            </div>
+        </div>
+
+        <br><br>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-sm-3">
+
+                     <label class="" for="day_array[]" >
+                         <input {{ isset( $TimeArray['everyday'] )?'checked':'' }} value="everyday" class="status" type="checkbox"  value="everyday" name="day_array[]"> {{ trans('public.everyday') }}
+                     </label>              
+                     <label  for="day_array[]" >
+                         <input {{ isset( $TimeArray['saturday'] )?'checked':'' }} value="saturday" id="status" class="status" type="checkbox"  name="day_array[]"> {{ trans('public.saturday') }}
+                     </label>
+                     <label class="" for="day_array[]" >
+                         <input {{ isset( $TimeArray['sunday'] )?'checked':'' }} value="sunday" class="status" type="checkbox" name="day_array[]"> {{ trans('public.sunday') }}
+                     </label>
+                     <label class="" for="day_array[]" >
+                         <input {{ isset( $TimeArray['monday'] )?'checked':'' }} value="monday" class="status" type="checkbox" name="day_array[]"> {{ trans('public.monday') }}
+                     </label>
+                     <label class="" for="day_array[]" >
+                         <input {{ isset( $TimeArray['tuesday'] )?'checked':'' }} value="tuesday" class="status" type="checkbox" name="day_array[]"> {{ trans('public.tuesday') }}
+                     </label>
+                     <label class="" for="day_array[]" >
+                         <input {{ isset( $TimeArray['wednesday'] )?'checked':'' }} value="wednesday" class="status" type="checkbox" name="day_array[]"> {{ trans('public.wednesday') }}
+                     </label>
+                     <label class="" for="day_array[]" >
+                         <input {{ isset( $TimeArray['thursday'] )?'checked':'' }} value="thursday" class="status" type="checkbox" name="day_array[]"> {{ trans('public.thursday') }}
+                     </label>
+                </div>
+                <div class="col-sm-4">
+                   <button class="btn btn-default">{{ trans('food.advanced_options') }}</button>
+                </div>
+            </div>
+        </div>
+        <br><br><br><br>
+        <div class="row" >
+           <div class="col-sm-2">
+              <button type="submit" value="submit" class="btn btn-success btn-block">{{ trans('public.save') }}</button>
+           </div> 
+           <div class="col-sm-1">
+           </div>
+           <div class="col-sm-2">
+              <button type="reset" value="reset" class="btn btn-danger btn-block">{{ trans('public.reset') }}</button>
+           </div> 
+        </div>
+        <br><br><br>
+    </form>
+
+   
+@endsection

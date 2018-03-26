@@ -1,0 +1,527 @@
+@extends('layouts.admin.main')
+@section('sidebar')
+   @include('layouts.admin.sidebar')
+@endsection
+@section('extra-scripts')
+
+<script src="{{ asset( '/public/js/sortable/Sortable.js') }}"></script>
+<script type="text/javascript">
+    $( document ).ready(function() {
+    	console.log( "ready!" );
+    	var current_element = $('div tab-pane active');
+    	var i =0 , j= 0 ,k = 0, d_flag = 0;
+    	var urls = [] , url = [];
+
+    	$("ul.nav.nav-tabs>li").each( function(i){
+			j = i;
+		});
+		console.log( 'j: '+ j );
+
+		$("ul.nav.nav-tabs>li>a").click( function(e){
+
+			var id = $(this).attr('id');
+			var num =id.substr(3);
+			console.log ( $(this).parent().attr('class') );
+			if( $(this).parent().attr('class') != 'active' && $(this).attr('data-toggle') ){
+    			console.log( "bug: ", num );
+    			i = num ; 
+
+			}
+		});
+		
+    	$("#next").click( function( event ){
+    		event.preventDefault();
+    		console.log( "event prevent default: done!" );
+
+    		var li = $('li.active');
+    		if( $('li.active > a:first-child').attr('id')=='tab0'){
+    			$("ul.nav.sortable").empty();
+    			console.log( "alien done!" );
+        		urls = [];
+    			url = [];
+    			k = 0 ;
+    			
+    		}
+			/* a var defined to avoid collison between active tabs */
+			
+    		$('li.active').removeClass('active');
+    		li.next().addClass('active');
+			
+    		
+    		$('li.active > a:first-child').attr('data-toggle','tab');
+    		
+			var div = $('div.tab-pane.active');
+			var div_id = div.next().attr('id');
+			console.log( 'tab-id: '+ div_id );
+    		
+   		    $('div.tab-pane.active').next().addClass('active');
+      		div.removeClass('active');
+      		i++;
+      		console.log( 'i: '+ i +'-j:', j );
+      		
+    		if( i > j ){
+    			console.log( 'match ! ' );
+    			$('ul.nav.nav-tabs>li:first-child').addClass('active');
+    			//$("ul.nav.nav-tabs>li:first-child>a").attr('data-toggle','tab');
+    			$('div.tab-content>div:first-child').addClass('active');
+    			$("ul.nav.sortable").empty();
+    			i = 0;
+    			console.log( "Cleared 2 !" );
+    			urls = [];
+    			url = [];
+    			k = 0;
+    		}
+
+    		
+    		var slug = '', title ='', controller ='',nested_level ='',parent = '', namespace ='';
+    		//var main_ul = $('<ul></ul>').attr('class','sortable default vertical');
+
+
+                if( $(this).is(':checked') && div_id =="sidebar-view" ){
+
+                        var url_id = $(this).val();
+
+                        $('input[value^=' + url_id +']').each( function(i){
+
+                                switch( $(this).attr('name') ){
+
+                                        case 'url_slug[]':
+                                                slug = $(this).val().substr(2); 
+                                                break;
+
+                                        case 'url_title[]':
+                                                title = $(this).val().substr(2); 
+                                                break;
+
+                                        case 'url_controller[]': //parent
+
+                                                controller = $(this).val().substr(2);
+                                                parent = controller;
+
+                                                break;
+
+                                    case 'url_namespace[]': //parent
+
+                                                namespace = $(this).val().substr(2);
+                                                break;		
+                                }
+
+                        });
+
+
+                        url = [];
+                        /* initializing array as object ! coool */
+                        url = {
+                                url_slug  : slug ,
+                                url_title : title ,
+                        url_controller: controller ,
+                        url_namespace : namespace ,
+                        url_parent_order : '',
+                        url_child_order : '',
+                        };		
+                        urls.push( url );
+                        k++;
+
+
+                        if( $('#'+parent ).length ){
+                                var parent_ul = $('#'+parent );
+                                var main_li = parent_ul.parent();
+                                console.log('me');
+                        }else{	
+
+                                var parent_ul = $('<ul></ul>').attr({'id': parent,'class':'nav nav-second-level collapse in' });
+                                var main_li = $("<li></li>").attr('class','moving');
+                                var main_a = $('<a></a>').attr({
+                                        'href':'{{ url( App::getLocale() ) }}'+'/'+ namespace +'/'+parent  ,
+
+                                });
+
+
+                                var main_icon_a = main_a.clone();			
+                                main_icon_a.append( parent );
+
+                                main_a.append('<i class="fa fa-arrows fa-fw fa-lg"></i>');
+                                main_a.append("<span class='fa fa-arrow'></span>");
+                                main_a.append( parent );
+                                main_li.append( main_a );
+
+                                /****** Adding ICONS to Next Tab*******/
+
+                                console.log('Icons Added');
+
+                        }
+
+                        var a = $('<a></a>').attr({
+                                'href':'{{ url( App::getLocale() ) }}'+'/'+ namespace +'/'+parent +'/' + slug ,
+
+                        });
+                        a.append('<i class="fa fa-arrows fa-fw"></i>');
+                        a.append( slug );
+                        var li = $('<li></li>').append( a );
+                        parent_ul.append( li );
+                        //var main_li = $("<li></li>").attr('class','moving');
+
+                        main_li.append( parent_ul );
+
+                        $("ul.sortable").append(main_li);
+
+
+                        var list = document.getElementById('side-menu2');
+                        Sortable.create(list);
+
+                        $("ul.sortable>li>ul").each( function(i){
+                                var id = $(this).attr('id');
+                                var list2 = document.getElementById(id);
+                                Sortable.create(list2);
+                        });
+
+                        console.log( url );
+                        console.log( urls );
+
+                }/*if( $(this).is(':checked') )*/
+
+    		
+    	});/***** ENDOF Click Event ****/
+
+
+
+    	
+    	$("#save-sidebar").click( function( event ){
+    		
+    		event.preventDefault();
+        	$("ul.nav.sortable>li.moving").each( function(i){
+            	
+        		controller = '';
+    			controller = $(this).children("a").text();
+    			
+    			for( m=0; m<k;m++){
+					
+ 					if( typeof urls[m]['url_controller'] !== 'undefined' ){
+ 	 					var temp = urls[m]['url_controller'];
+ 	 					if( temp == controller){
+     						urls[m].url_parent_order = i;
+     						
+ 	 					}
+ 					}
+    			}
+
+    			
+    			
+    			$("ul#"+controller+">li").each( function(n){
+        			
+        			slug = '';
+    				slug = $(this).children("a").text();
+				
+				
+        			for( m=0; m < urls.length ;m++){
+
+    					if( typeof urls[m]['url_slug'] !== 'undefined' ){
+    						var temp  = urls[m]['url_slug'];
+    						var temp2 = urls[m]['url_controller'];
+    						
+    						if( temp == slug && temp2 == controller ){
+
+        						urls[m].url_child_order = n;
+    						}
+						
+    					}
+        			}
+
+
+
+    			});	
+    		
+    			
+    			
+    		});
+        	console.log( "u r f k me" );
+        	console.log( urls );
+        		
+        	
+        	$.ajax({
+            	
+               headers : {'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')},
+        	   data: {
+           	      'sidebar_title' : $('input[id="sidebar_title"]').val(),
+           	      'url-array' : urls
+           	   },
+               dataType: 'json',
+    
+     		   error: function() {
+       		      $('#info').html('<p>An error has occurred</p>');
+       		   },	
+    
+     		   success: function(data) {
+         		  if( typeof data['category-name'] !== 'undefined' ){
+          			 console.log( '1' );
+             		 $("div#category-status-error").removeClass("hidden");
+					 $("div#category-status-error p#error")
+						.append(data['category-name'] +'<br>' );
+				     $("div#category-status-error span.close").click( function( event ){   
+					    $("div#category-status-error").addClass("hidden");
+					 });		
+						   
+             	  }else if( typeof data['no-error'] !== 'undefined' ){
+              		 console.log( 'no Error' );
+               		 $("div#category-status-success ").removeClass("hidden");
+					 $("div#category-status-success p#success")
+					   .append(data['no-error']+'<br>' );
+					 $("div#category-status-success span.close").click( function( event ){   
+							$("div#category-status-success").addClass("hidden");
+					 });	  
+
+             	  }	  
+
+      			  console.log(  data );
+              			  
+     		   },
+     		   
+     		   type: 'POST',
+     		   
+      		   url: "{{ url(App::getLocale().'/admin/sidebar/add-new') }}",
+     	 		   
+     		});
+		});
+	/***** ENDOF Click Event ****/
+
+    });
+</script>
+
+@endsection
+@section('extra-stylesheets')
+<style  type="text/css" >
+
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
+
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
+
+ul.sortable li.placeholder ul.sortable>li>ul{
+  position: relative;
+  list-style-type: none;	
+  /** More li styles **/
+}
+ul ul , ol ol {
+	list-style-type: none;	
+}
+ul.sortable {
+  padding : 20px;
+  	
+  /** Define arrowhead **/
+}
+ul.sortable>li>ul>li{
+	
+	border-radius:3px;
+	margin-left:20px;
+}
+
+div#sidebar-view{
+	padding:30px;
+}
+
+</style>
+
+@endsection
+@section('content')
+<div class="row">
+	<div class="col-lg-12">
+		<h1 class="page-header">SideBars</h1>
+	</div>
+	<!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">List Of SideBars</div>
+			<!-- /.panel-heading -->
+
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation"  class="active">
+    				<a  id="tab0" href="#sidebar-action" aria-controls="sidebar-action" role="tab" data-toggle="tab"> 
+    				Actions List
+    				</a>
+				</li>
+				<li role="presentation"  class=""><a id="tab1" href="#sidebar-view"
+					aria-controls="sidebar-view" role="tab" > SideBar View</a>
+				</li>
+				<li role="presentation"  class=""><a id="tab2" href="#sidebar-icon"
+					aria-controls="sidebar-icon" role="tab" > SideBar Icon</a>
+				</li>
+			</ul>
+			<!-- Modal -->
+			<div class="modal fade" id="add-role" tabindex="-1" role="dialog"
+				aria-labelledby="myModalLabel">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title" id="myModalLabel">{{
+								trans('form.add_a_new_user') }}</h4>
+						</div>
+						<div class="modal-body">
+							<div id="role-status-error" class="hidden row">
+								<div class="col-md-10 col-centered alert alert-danger alert-dismissible fade in"
+									role=alert>
+									<p id="error">
+										<span class="close"> <i class="fa fa-remove fa-fw"></i>
+											
+										</span>
+									</p>
+								</div>
+							</div>
+							<div id="role-status-success" class="hidden row">
+								<div class="bg-success col-md-10 col-centered alert  alert-dismissible fade in">
+									<p class="" id="success">
+										<span class="close"> <i class="fa fa-check fa-fw"></i>
+											
+										</span>
+									</p>
+								</div>
+							</div>
+							<div class="row">
+								<form role="form" method="post"	action="{{ url(App::getLocale().'/admin/acl/add-new') }}">
+									<div class="col-md-2">
+										<label for="role_title">{{ trans('public.add') }}</label>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<input type="text" class="form-control" id="add-role"
+												name="role_title" placeholder="RoleName">
+										</div>
+									</div>
+									<div class="col-md-6">
+										<ul class="list-group">
+											<li class="list-group-item">
+												<h4>
+													<i class="fa fa-key fa-fw"></i> Permissions
+												</h4>
+											</li> 
+											
+
+											<li class="list-group-item"><label class="checkbox-inline"> <input
+													type="checkbox" name="permission_array[]"
+													value="">
+											</label></li> 
+										</ul>
+									</div>
+
+            						<div class="modal-footer">
+            							<button type="button" class="btn btn-default"
+            								data-dismiss="modal">Close</button>
+            							<button id="save-role-btn" type="button" class="btn btn-primary">Save
+            								changes</button>
+            						</div>
+						        </form>
+						   </div><!-- .row -->    
+					    </div><!-- .modal-body -->
+				    </div><!-- .modal-content -->
+				</div><!-- .modal-dialog -->    
+
+			</div>
+			<!-- End Of Modal modal fad-->
+
+                
+		    <form role="form" method="post" action="{{ url(App::getLocale().'/admin/sidebar/add-new') }}">
+		        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+    		    <div class="tab-content">
+    			    <div role="tabpanel" class="tab-pane active" id="sidebar-action">
+    				   <div class="table-responsive dataTable_wrapper">
+    						<table class="table  table-striped table-bordered table-hover"
+    							id="dataTable-article">
+    							<thead>
+    								<tr>
+    								    <th>{{ trans('public.select_actions') }}</th>
+    									<th>{{ trans('public.id') }}</th>
+    									<th>{{ trans('admin.sidebar_slug') }}</th>
+    									<th>{{ trans('public.title')}}</th>
+    									<th>{{ trans('public.parent')}}</th>
+
+    								</tr>
+    							</thead>
+    							<tbody>
+    							   @foreach( $ViewParams['url_array'] as $url)
+    								<tr>
+    								    <td>
+                                          <input class="action" type="checkbox" value=" {{ $url['url_id'] }}" name="url[ {{ $url['url_slug'] }} ]"> 
+    								    </td>
+    									<td>
+    									   <input class="action" type="hidden" value="{{ $url['url_id'] }}" name="url_id[]">
+    									   {{ $url['url_id'] }}
+    									</td>
+    									<td>
+    									   <input class="action" type="hidden" value="{{ $url['url_id'].'_'.$url['url_slug'] }}" name="url_slug[]">
+    									   {{ $url['url_slug'] }}
+    									</td>
+    									<td>
+    									   <input class="action" type="hidden" value="{{ $url['url_id'].'_'.$url['url_title'] }}" name="url_title[]">
+    									   {{ $url['url_title'] }}
+    									</td>
+    									<td>
+    									   <input class="action" type="hidden" value="{{ $url['url_id'].'_'.$url['url_namespace'] }}" name="url_namespace[]">
+    									   <input class="action" type="hidden" value="{{ $url['url_id'].'_'.$url['url_controller'] }}" name="url_controller[]">
+    									   {{ $url['url_controller'] }}
+    									</td>
+
+    								</tr>
+    								@endforeach
+    						
+    							</tbody>
+    						</table>
+    
+    					</div><!-- /.dataTable -->
+    
+    				</div><!-- /.tab-pane -->
+    				<div role="tabpanel" class="tab-pane" id="sidebar-view">
+    				    <div class="form-group">
+                            <div class="input-group col-sm-6 col-md-6 col-lg-4">
+                              <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+                    		  <input name="sidebar_title" id="sidebar_title" placeholder="sidebar Title" type="text" class="form-control"  style="">
+                    		</div>
+        				</div> 
+            			<div class="sidebar2" role="navigation">	    
+                            <div class="">
+                                <ul class="nav sortable" id="side-menu2">
+                                    <!-- Jquery Part ::  -->
+                                </ul>
+                            </div>
+                            <!-- /.sidebar-collapse -->
+                        </div>
+
+    				</div><!-- /.tab-pane -->
+    				<div role="tabpanel" class="tab-pane" id="sidebar-icon">
+    					<div class="dataTable_wrapper">
+					    <div id="icon-selection-container">
+    					       
+					          <!-- Jquery Icon Part ::  -->
+					       
+					    </div>
+    					</div>
+    
+    				</div><!-- /.tab-pane -->
+    			</div>	
+    			<div class="pull-right">
+    				<button id="next" type="" value="" class="btn btn-primary">
+    				  {{ trans('public.next') }}
+    				  <i class="fa fa-chevron-right fa-fw"></i> 
+    				</button>
+    				<button id="save-sidebar" type="submit" value="submit" class="btn btn-success">
+    				  {{ trans('public.save') }}
+    				  <i class="fa fa-check fa-fw"></i> 
+    				</button>
+		        </div>
+			</form>
+
+		</div> <!-- /.panel-default -->
+		
+	</div><!-- /.col-lg-12 -->
+</div><!-- /.row -->
+@endsection

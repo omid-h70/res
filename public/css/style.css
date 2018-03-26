@@ -1,0 +1,35 @@
+/* 
+    Created on : Feb 24, 2016, 12:32:36 PM
+    Author     : @Omid
+*/
+
+.navbar-guest{
+    padding-top:30px;
+    padding-right:7px;
+    padding-bottom:30px;
+    padding-left:7px;
+}
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
+    margin-bottom: 20px;
+}
+       
+.image-container {
+   max-height:300px;
+   min-height:300px;
+   overflow:hidden;
+}
+
+.custom-container{
+    max-height:175px;
+}
+
+.img-custom{
+    overflow:hidden;
+}
+
+.fa-2x {
+  vertical-align: middle;
+}

@@ -1,0 +1,24 @@
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Order Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines are the default lines which match reasons
+    | that are given by the password broker for a password update attempt
+    | has failed, such as for an invalid token or invalid new password.
+    |
+    */
+    'order'        => 'Order',
+    
+    'pay'          => 'Pay',
+    
+    'send_order'   => 'Send Order',
+    'submit_order' => 'Submit Order',
+    
+    'your_order'   => 'Your Order',
+];
+

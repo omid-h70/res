@@ -1,0 +1,49 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Aug 12, 2016, 10:44:10 AM
+    Author     : Omid
+*/
+
+@charset "utf-8";
+/* CSS Document */
+
+@font-face{
+    font-family:'BYekan';
+    src:url('fonts/farsi/BYekan.eot');
+    src:local('☺'),url('fonts/farsi/BYekan.ttf') format('truetype'), 
+    url('fonts/farsi/BYekan.woff') format('woff'),
+    url('fonts/farsi/BYekan.svg') format('svg');
+}
+
+
+* {
+    /*font-size: 100%; */
+    font-family: BYekan,Tahoma,Times,serif;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: BYekan,Tahoma,Times,serif ;
+}    
+ 
+    
+.b-yekan{
+    font-family:BYekan,Tahoma,Times,serif;
+    direction:rtl;
+}
+
+.b-yekan-med-1{
+    font-size:20px;
+    font-family:BYekan,Tahoma,Times,serif;
+    direction:rtl;
+}
+
+.b-yekan-med-2{
+    font-size:25px;
+    font-family:BYekan,Tahoma,Times,serif;
+    direction:rtl;
+}
+
